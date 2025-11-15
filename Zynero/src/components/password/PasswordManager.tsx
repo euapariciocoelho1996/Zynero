@@ -429,7 +429,7 @@ export const PasswordManager = () => {
           </div>
         <div className="filters">
             <div className="filter-group">
-              <label>📁 Categoria</label>
+              <label>Categoria</label>
           <select
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
@@ -442,7 +442,7 @@ export const PasswordManager = () => {
             </div>
 
             <div className="filter-group">
-              <label>🔍 Buscar</label>
+              <label>Buscar</label>
           <input
             type="text"
                 placeholder="Digite o nome..."
@@ -474,7 +474,7 @@ export const PasswordManager = () => {
                 <span className="item-icon">{item.icon}</span>
                 <div className="item-info">
                   <strong className="item-name">{item.name}</strong>
-                  <span className="item-category">📁 {item.category}</span>
+                  <span className="item-category">{item.category}</span>
                   <div className="item-password">
                     <span className="password-value">
                       {visiblePasswords.has(item.id) ? item.password : '••••••••••••'}
@@ -495,14 +495,14 @@ export const PasswordManager = () => {
                   onClick={() => handleEdit(item)}
                   title="Editar senha"
                 >
-                  ✏️ Editar
+                  ✏️ 
                 </button>
                 <button
                   className="action-btn delete-btn"
                   onClick={() => handleDelete(item.id)}
                   title="Deletar senha"
                 >
-                  🗑️ Deletar
+                  🗑️ 
                 </button>
               </div>
             </div>
