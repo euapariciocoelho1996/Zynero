@@ -215,6 +215,7 @@ export const PasswordManager = () => {
       setFormData({ category: categories[0], name: "", password: "" });
       setSelectedIcon(iconOptions[0]);
       setShowForm(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     } catch (error: any) {
       Swal.fire("Erro!", "Não foi possível salvar os dados.", "error");
     }
@@ -294,6 +295,7 @@ export const PasswordManager = () => {
       setSelectedIcon(iconOptions[0]);
       setEditingItem(null);
       setShowForm(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Erro ao atualizar senha:", error);
       Swal.fire("Erro!", "Não foi possível atualizar os dados.", "error");
