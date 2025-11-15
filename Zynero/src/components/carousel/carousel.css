@@ -1,0 +1,87 @@
+.zynero-carousel-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 2rem auto;
+  padding: 20px;
+  
+  border-bottom: 1px solid var(--zynero-border);
+  
+  box-shadow-bottom: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.zynero-carousel-content {
+  position: relative;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.zynero-carousel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.zynero-carousel-icon {
+  color: var(--zynero-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zynero-carousel-text {
+  color: var(--zynero-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0;
+}
+
+.zynero-carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.zynero-carousel-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: var(--zynero-border);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.zynero-carousel-indicator:hover {
+  background-color: var(--zynero-text-secondary);
+}
+
+.zynero-carousel-indicator.active {
+  width: 24px;
+  border-radius: 4px;
+  background-color: var(--zynero-accent);
+}
+  

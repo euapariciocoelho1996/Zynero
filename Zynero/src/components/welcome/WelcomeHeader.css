@@ -1,0 +1,41 @@
+.welcome-header {
+    text-align: center;
+    margin: 32px 0;
+    padding: 0 16px;
+  }
+  
+  .welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  
+  .welcome-subtitle {
+    margin: 12px 0 20px;
+    font-size: 1.1rem;
+    font-weight: 400;
+    opacity: 0.75;
+  }
+  
+  .welcome-actions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 12px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .welcome-actions li {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.4;
+    transition: opacity 0.2s ease;
+  }
+  
+  .welcome-actions li:hover {
+    opacity: 1;
+  }
+  
