@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // --- Importações de Componentes ---
-import { AuthForm } from './components/auth/AuthForm';
-import { DashboardLayout } from './components/dashboard/DashboardLayout';
+import { AuthForm } from "./components/auth/AuthForm";
+import { DashboardLayout } from "./components/dashboard/DashboardLayout";
+import { PasswordManager } from "./components/password/PasswordManager";
 
 // --- Importações do Firebase ---
-import { auth } from './components/auth/firebaseConfig';
-import { type User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from "./components/auth/firebaseConfig";
+import { type User, onAuthStateChanged, signOut } from "firebase/auth";
 
 // --- Importações de Estilos ---
-import './App.css';
+import "./App.css";
 
 function App() {
   // --- Estados ---
@@ -34,14 +35,14 @@ function App() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log('Usuário deslogado com sucesso.');
+      console.log("Usuário deslogado com sucesso.");
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error("Erro ao fazer logout:", error);
     }
   };
 
   const handleAuthSuccess = (loggedInUser: User) => {
-    console.log('Login/Cadastro bem-sucedido!', loggedInUser.email);
+    console.log("Login/Cadastro bem-sucedido!", loggedInUser.email);
     // O estado do usuário será atualizado automaticamente pelo onAuthStateChanged
   };
 
@@ -63,7 +64,11 @@ function App() {
 
   // 3. Tela Principal (usuário autenticado)
   return (
-    <DashboardLayout user={user} onLogout={handleLogout}></DashboardLayout>
+    <DashboardLayout user={user} onLogout={handleLogout}>
+      {/* Coloque aqui o conteúdo que deve aparecer "dentro" do layout */}
+      <PasswordManager />
+      {/* <OutroComponente /> */}
+    </DashboardLayout>
   );
 }
 

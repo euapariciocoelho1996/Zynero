@@ -215,9 +215,15 @@ export const PasswordManager = () => {
       setFormData({ category: categories[0], name: "", password: "" });
       setSelectedIcon(iconOptions[0]);
       setShowForm(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-    } catch (error: any) {
-      Swal.fire("Erro!", "Não foi possível salvar os dados.", "error");
+
+      // ✨✨✨ MUDANÇA AQUI ✨✨✨
+    } catch (error) {
+      console.error("Erro ao salvar senha:", error);
+      let message = "Não foi possível salvar os dados.";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      Swal.fire("Erro!", message, "error");
     }
   };
 
@@ -295,10 +301,15 @@ export const PasswordManager = () => {
       setSelectedIcon(iconOptions[0]);
       setEditingItem(null);
       setShowForm(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+
+      // ✨✨✨ MUDANÇA AQUI ✨✨✨
+    } catch (error) {
       console.error("Erro ao atualizar senha:", error);
-      Swal.fire("Erro!", "Não foi possível atualizar os dados.", "error");
+      let message = "Não foi possível atualizar os dados.";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      Swal.fire("Erro!", message, "error");
     }
   };
 
@@ -320,7 +331,11 @@ export const PasswordManager = () => {
         Swal.fire("Deletado!", "A senha foi removida com sucesso.", "success");
       } catch (error) {
         console.error("Erro ao deletar senha:", error);
-        Swal.fire("Erro!", "Não foi possível deletar a senha.", "error");
+        let message = "Não foi possível deletar a senha.";
+        if (error instanceof Error) {
+          message = error.message;
+        }
+        Swal.fire("Erro!", message, "error");
       }
     }
   };
@@ -424,7 +439,6 @@ export const PasswordManager = () => {
         >
           {editingItem && (
             <div className="edit-mode-banner">
-              {/* ✨✨✨ CORREÇÃO APLICADA AQUI ✨✨✨ */}
               <span>✏️ Editando: {editingItem.name}</span>
             </div>
           )}

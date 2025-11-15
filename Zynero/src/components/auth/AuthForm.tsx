@@ -64,25 +64,32 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
     if (apiError instanceof FirebaseError) {
       switch (apiError.code) {
         case 'auth/user-not-found':
-          message = "Nenhum usuário encontrado com este e-mail.";
+          message = "E-mail não encontrado. Verifique se digitou corretamente ou crie uma conta.";
           break;
         case 'auth/wrong-password':
-          message = "Senha incorreta. Tente novamente.";
+          message = "Senha incorreta. Verifique sua senha e tente novamente.";
+          break;
+        case 'auth/invalid-credential':
+        case 'auth/invalid-login-credentials':
+          message = "E-mail ou senha incorretos. Verifique seus dados e tente novamente.";
           break;
         case 'auth/email-already-in-use':
-          message = "Este e-mail já está em uso por outra conta.";
+          message = "Este e-mail já está cadastrado. Use outro e-mail ou faça login.";
           break;
         case 'auth/weak-password':
           message = "Senha muito fraca. Use pelo menos 6 caracteres.";
           break;
         case 'auth/invalid-email':
-          message = "O formato do e-mail é inválido.";
+          message = "O formato do e-mail é inválido. Verifique se digitou corretamente.";
           break;
         case 'auth/too-many-requests':
-            message = "Muitas tentativas. Tente novamente mais tarde.";
-            break;
+          message = "Muitas tentativas falhadas. Aguarde alguns minutos e tente novamente.";
+          break;
+        case 'auth/network-request-failed':
+          message = "Erro de conexão. Verifique sua internet e tente novamente.";
+          break;
         default:
-          message = apiError.message;
+          message = "Erro ao fazer login. Verifique seus dados e tente novamente.";
       }
     }
     setError(message);

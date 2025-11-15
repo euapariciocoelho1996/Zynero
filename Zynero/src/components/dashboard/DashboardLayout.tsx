@@ -6,7 +6,6 @@ import "./DashboardLayout.css";
 import ZyneroCarousel from "../carousel/carousel";
 import { Sidebar } from "../sidebar/Sidebar";
 import { IconMenu } from "../sidebar/icons";
-import { PasswordManager } from "../password/PasswordManager";
 
 interface DashboardLayoutProps {
   user: User;
@@ -51,7 +50,7 @@ export const DashboardLayout = ({
 
         <main className="content-wrapper">
           <ZyneroCarousel />
-          <PasswordManager />
+
           {children}
         </main>
       </div>

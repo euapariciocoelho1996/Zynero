@@ -184,3 +184,70 @@
     border-color: var(--zynero-accent);
     color: var(--zynero-accent);
   }
+
+  /* --- Responsividade --- */
+  @media (max-width: 480px) {
+    .zynero-auth-wrapper {
+      padding: 12px;
+    }
+
+    .zynero-auth-container {
+      padding: 24px 20px;
+      border-radius: 8px;
+    }
+
+    .auth-header h2 {
+      font-size: 1.75rem;
+    }
+
+    .auth-header p {
+      font-size: 0.85rem;
+    }
+
+    .auth-title {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .input-group input {
+      padding: 10px 10px 10px 44px;
+      font-size: 0.95rem;
+    }
+
+    .input-group svg {
+      left: 12px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .auth-button {
+      padding: 12px;
+      font-size: 0.95rem;
+    }
+
+    .auth-links {
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    .link-button {
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .auth-error,
+    .auth-info {
+      padding: 10px;
+      font-size: 0.85rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .zynero-auth-container {
+      padding: 20px 16px;
+    }
+
+    .auth-header h2 {
+      font-size: 1.5rem;
+    }
+  }

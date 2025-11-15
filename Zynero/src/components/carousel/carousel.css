@@ -71,3 +71,76 @@
 .zynero-carousel-indicators {
   display: none;
 }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .zynero-carousel-container {
+    padding: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+  .zynero-carousel-content {
+    min-height: 160px;
+  }
+
+  .zynero-carousel-item {
+    padding: 30px 20px;
+    gap: 20px;
+  }
+
+  .zynero-carousel-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .zynero-carousel-text {
+    font-size: 1.1rem;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .zynero-carousel-container {
+    padding: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .zynero-carousel-content {
+    min-height: 140px;
+  }
+
+  .zynero-carousel-item {
+    padding: 24px 16px;
+    gap: 16px;
+  }
+
+  .zynero-carousel-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .zynero-carousel-text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 360px) {
+  .zynero-carousel-container {
+    padding: 10px;
+  }
+
+  .zynero-carousel-item {
+    padding: 20px 12px;
+    gap: 12px;
+  }
+
+  .zynero-carousel-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .zynero-carousel-text {
+    font-size: 0.95rem;
+  }
+}

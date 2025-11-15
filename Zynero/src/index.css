@@ -17,3 +17,22 @@ body {
   min-height: 100vh;
 }
 
+/* Centralizar SweetAlert2 */
+.swal2-popup {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+}
+
+.swal2-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
