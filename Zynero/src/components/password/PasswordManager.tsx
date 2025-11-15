@@ -16,9 +16,10 @@ import {
 import { db } from "../auth/firebaseConfig";
 import { auth } from "../auth/firebaseConfig";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import CryptoJS from "crypto-js"; // 1. IMPORTAÇÃO DA BIBLIOTECA DE CRIPTOGRAFIA
+import CryptoJS from "crypto-js";
+import { LockKeyhole } from 'lucide-react';
 
-// 20 ícones para o usuário escolher
+// ... (iconOptions e categories) ...
 const iconOptions = [
   "🔒", "🔑", "📱", "💻", "🌐", "📧", "💾", "🏦", "🎮", "📷",
   "📚", "🚀", "🎧", "🛒", "⚙️", "🧩", "💬", "🎯", "🧪", "🛡️",
@@ -33,19 +34,19 @@ interface PasswordItem {
   icon: string;
   category: string;
   name: string;
-  password: string; // Isto agora será o texto CRIPTOGRAFADO
+  password: string;
 }
 
 export const PasswordManager = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [masterKey, setMasterKey] = useState<string | null>(null); // 2. ESTADO DA SENHA MESTRA
+  const [masterKey, setMasterKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(iconOptions[0]);
   const [formData, setFormData] = useState({
     category: categories[0],
     name: "",
-    password: "", // Isto será a senha em texto puro, apenas no formulário
+    password: "",
   });
 
   const [savedItems, setSavedItems] = useState<PasswordItem[]>([]);
@@ -58,7 +59,7 @@ export const PasswordManager = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // 3. FUNÇÕES DE CRIPTOGRAFIA
+  // ... (Funções de Criptografia: encryptPassword, decryptPassword) ...
   const encryptPassword = (text: string, key: string): string => {
     return CryptoJS.AES.encrypt(text, key).toString();
   };
@@ -68,96 +69,70 @@ export const PasswordManager = () => {
       const bytes = CryptoJS.AES.decrypt(ciphertext, key);
       const originalText = bytes.toString(CryptoJS.enc.Utf8);
       if (!originalText) {
-        // Isso acontece se a chave estiver errada
         throw new Error("Chave mestra inválida ou dados corrompidos.");
       }
       return originalText;
     } catch (error) {
       console.error("Erro ao descriptografar:", error);
-      // Retorna um placeholder em caso de falha (ex: chave errada)
       return "****** (Chave Inválida)"; 
     }
   };
 
-
-  // Observa mudanças na autenticação
+  // ... (useEffects de autenticação e carregamento de dados) ...
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
       if (!currentUser) {
-        setMasterKey(null); // Limpa a chave mestra ao deslogar
+        setMasterKey(null);
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // Carrega dados do Firestore quando o usuário estiver autenticado
   useEffect(() => {
     if (!user) {
       setSavedItems([]);
       setLoading(false);
       return;
     }
-
-    // Não carrega os dados se a chave mestra não estiver definida
-    // Apenas escuta quando o cofre for destrancado.
     if (!masterKey) {
        setLoading(false);
-       setSavedItems([]); // Limpa itens se o cofre for trancado
+       setSavedItems([]);
        return;
     }
-
     setLoading(true);
     const passwordsRef = collection(db, "passwords");
     const q = query(passwordsRef, where("userId", "==", user.uid));
-
-    console.log("🔍 Iniciando listener do Firestore para userId:", user.uid);
-
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        console.log("📦 Snapshot recebido:", snapshot.size, "documentos");
         const items: PasswordItem[] = [];
-
-        if (snapshot.empty) {
-          console.log("⚠️ Nenhum documento encontrado na coleção passwords");
-        }
-
         snapshot.forEach((docSnapshot) => {
           const data = docSnapshot.data();
-          console.log("📄 Documento encontrado:", docSnapshot.id);
           items.push({
             id: docSnapshot.id,
             icon: data.icon || "🔒",
             category: data.category || "",
             name: data.name || "",
-            password: data.password || "", // Salva o texto criptografado
+            password: data.password || "",
           });
         });
-
-        console.log("✅ Total de itens carregados:", items.length);
         setSavedItems(items);
         setLoading(false);
       },
       (error) => {
         console.error("❌ Erro ao carregar senhas:", error);
         setLoading(false);
-        Swal.fire({
-          title: "Erro ao carregar!",
-          text: `Não foi possível carregar suas senhas. ${error.message}`,
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
+        Swal.fire("Erro ao carregar!", `Não foi possível carregar suas senhas. ${error.message}`, "error");
       }
     );
-
     return () => {
-      console.log("🧹 Limpando listener do Firestore");
       unsubscribe();
     };
-  }, [user, masterKey]); // RE-EXECUTA QUANDO A CHAVE MESTRA MUDAR
+  }, [user, masterKey]); 
 
+  // ... (useMemos: filteredCategories, filteredList, paginatedList) ...
   const filteredCategories = useMemo(() => {
     const unique = ["Todas", ...new Set(savedItems.map((i) => i.category))];
     return unique;
@@ -167,40 +142,33 @@ export const PasswordManager = () => {
     return savedItems.filter((item) => {
       const matchesCategory =
         filterCategory === "Todas" || item.category === filterCategory;
-
       const matchesSearch = item.name
         .toLowerCase()
         .includes(search.toLowerCase());
-
       return matchesCategory && matchesSearch;
     });
   }, [savedItems, filterCategory, search]);
 
-  // Paginação
   const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedList = filteredList.slice(startIndex, endIndex);
 
-  // Reset página quando filtros mudarem
   useEffect(() => {
     setCurrentPage(1);
   }, [filterCategory, search]);
 
+  // ... (handleSubmit, togglePasswordVisibility) ...
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!user) {
       Swal.fire("Erro!", "Você precisa estar autenticado.", "error");
       return;
     }
-    
-    // 4. VERIFICAÇÃO DA CHAVE MESTRA (SALVAR)
     if (!masterKey) {
       Swal.fire("Cofre Trancado!", "Destranque seu cofre para salvar.", "warning");
       return;
     }
-
     try {
       const passwordsRef = collection(db, "passwords");
       const newDocData = {
@@ -208,29 +176,20 @@ export const PasswordManager = () => {
         icon: selectedIcon,
         category: formData.category,
         name: formData.name,
-        // 5. CRIPTOGRAFA A SENHA ANTES DE SALVAR
         password: encryptPassword(formData.password, masterKey),
         createdAt: new Date(),
       };
-
-      console.log("💾 Salvando documento criptografado no Firestore...");
-      const docRef = await addDoc(passwordsRef, newDocData);
-      console.log("✅ Documento salvo com ID:", docRef.id);
-
+      await addDoc(passwordsRef, newDocData);
       Swal.fire("Salvo!", "Os dados foram salvos com sucesso.", "success");
-
       setFormData({ category: categories[0], name: "", password: "" });
       setSelectedIcon(iconOptions[0]);
       setShowForm(false);
     } catch (error: any) {
-      console.error("❌ Erro ao salvar senha:", error);
-      // ... (seu tratamento de erro)
       Swal.fire("Erro!", "Não foi possível salvar os dados.", "error");
     }
   };
 
   const togglePasswordVisibility = (itemId: string) => {
-    // 6. VERIFICAÇÃO DA CHAVE MESTRA (VISUALIZAR)
     if (!masterKey) {
         Swal.fire("Cofre Trancado!", "Destranque seu cofre para ver as senhas.", "warning");
         return;
@@ -247,22 +206,18 @@ export const PasswordManager = () => {
   };
 
   const handleEdit = (item: PasswordItem) => {
-    // 7. VERIFICAÇÃO DA CHAVE MESTRA (EDITAR)
     if (!masterKey) {
         Swal.fire("Cofre Trancado!", "Destranque seu cofre para editar.", "warning");
         return;
     }
-
     setEditingItem(item);
     setFormData({
       category: item.category,
       name: item.name,
-      // 8. DESCRIPTOGRAFA A SENHA PARA MOSTRAR NO FORMULÁRIO
       password: decryptPassword(item.password, masterKey),
     });
     setSelectedIcon(item.icon);
     setShowForm(true);
-    // Scroll para o formulário
     setTimeout(() => {
       document
         .querySelector(".password-form")
@@ -270,30 +225,24 @@ export const PasswordManager = () => {
     }, 100);
   };
 
+  // ... (handleUpdate, handleDelete) ...
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!user || !editingItem) return;
-
-    // 9. VERIFICAÇÃO DA CHAVE MESTRA (ATUALIZAR)
     if (!masterKey) {
         Swal.fire("Cofre Trancado!", "Destranque seu cofre para atualizar.", "warning");
         return;
     }
-
     try {
       const docRef = doc(db, "passwords", editingItem.id);
       await updateDoc(docRef, {
         icon: selectedIcon,
         category: formData.category,
         name: formData.name,
-        // 10. CRIPTOGRAFA A SENHA NOVAMENTE ANTES DE ATUALIZAR
         password: encryptPassword(formData.password, masterKey),
         updatedAt: new Date(),
       });
-
       Swal.fire("Atualizado!", "Os dados foram atualizados com sucesso.", "success");
-
       setFormData({ category: categories[0], name: "", password: "" });
       setSelectedIcon(iconOptions[0]);
       setEditingItem(null);
@@ -306,22 +255,16 @@ export const PasswordManager = () => {
 
   const handleDelete = async (itemId: string) => {
     if (!user) return;
-    
-    // Você não precisa da chave mestra para deletar, 
-    // pois o ID do documento é o suficiente.
-    
     const result = await Swal.fire({
       title: "Tem certeza?",
       text: "Esta ação não pode ser desfeita!",
       icon: "warning",
-      // ... (seu código de confirmação)
       showCancelButton: true,
       confirmButtonColor: "#00bfa5",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sim, deletar!",
       cancelButtonText: "Cancelar",
     });
-
     if (result.isConfirmed) {
       try {
         await deleteDoc(doc(db, "passwords", itemId));
@@ -333,7 +276,15 @@ export const PasswordManager = () => {
     }
   };
 
-  if (loading && !masterKey) { // Ajuste no loading inicial
+  const handleCancelEdit = () => {
+    setEditingItem(null);
+    setFormData({ category: categories[0], name: "", password: "" });
+    setSelectedIcon(iconOptions[0]);
+    setShowForm(false);
+  };
+
+  // ... (Telas de Loading, Não Autenticado e Cofre Trancado) ...
+  if (loading && !masterKey) {
     return (
       <div className="password-manager">
         <p>Carregando...</p>
@@ -349,45 +300,55 @@ export const PasswordManager = () => {
     );
   }
   
-  // 11. TELA DE "COFRE TRANCADO"
   if (!masterKey) {
     const handleUnlock = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const password = (e.currentTarget.elements.namedItem("masterpass") as HTMLInputElement).value;
       if (password) {
-        // Apenas definimos a chave. 
-        // A validação real acontecerá na primeira tentativa de
-        // descriptografar algo, ou no 'useEffect' que busca os dados.
         setMasterKey(password);
-        setLoading(true); // Ativa o loading para buscar os itens
+        setLoading(true);
       }
     };
-
     return (
       <div className="password-manager vault-locked">
-        <h2>🔒 Cofre Trancado</h2>
+        <h2 style={{color: '#9a9ea9'}}><LockKeyhole /> Cofre Trancado</h2>
         <p>Digite sua senha mestra para descriptografar suas senhas.</p>
-        <p style={{fontSize: '0.8rem', opacity: 0.7}}>(Esta senha NUNCA é salva, apenas usada localmente)</p>
+        <p style={{fontSize: '0.8rem', opacity: 0.7, color: '#00a087'}}>(Esta senha NUNCA é salva, apenas usada localmente)</p>
         <form onSubmit={handleUnlock} className="vault-form">
-          <label htmlFor="masterpass">Senha Mestra</label>
-          <input type="password" id="masterpass" name="masterpass" required autoFocus />
+          <label htmlFor="masterpass" style={ { color: '#9a9ea9' } }>Senha Mestra</label>
+          <input type="password" id="masterpass" name="masterpass" required autoFocus placeholder='********'/>
           <button type="submit" className="save-btn">
             Destrancar
           </button>
         </form>
-         {/* Adicione um CSS para .vault-locked e .vault-form no seu .css */}
       </div>
     );
   }
   
-  // 12. RENDERIZAÇÃO PRINCIPAL (APENAS SE O COFRE ESTIVER DESTRANCADO)
+  // ====================================================================
+  // RENDERIZAÇÃO PRINCIPAL
+  // ====================================================================
   return (
     <div className="password-manager">
       <button className="lock-btn" onClick={() => setMasterKey(null)}>
         Trancar Cofre
       </button>
 
-      <button className="add-btn" onClick={() => setShowForm(!showForm)}>
+      <button 
+        className="add-btn" 
+        onClick={() => {
+          if (showForm) {
+            handleCancelEdit(); 
+          } else {
+            setShowForm(true);
+            setTimeout(() => {
+              document
+                .querySelector(".password-form")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
+          }
+        }}
+      >
         <span>+</span>
       </button>
 
@@ -397,100 +358,113 @@ export const PasswordManager = () => {
           className="password-form"
           onSubmit={editingItem ? handleUpdate : handleSubmit}
         >
-          {/* ... (Seu formulário não muda, pois formData.password já está em texto puro) ... */}
-           {editingItem && (
-             <div className="edit-mode-banner">
-               {/* ... (código do banner de edição) ... */}
-             </div>
-           )}
-           <label>Categoria</label>
-           <select
-             value={formData.category}
-             onChange={(e) =>
-               setFormData({ ...formData, category: e.target.value })
-             }
-           >
-             {categories.map((c) => (
-               <option key={c}>{c}</option>
-             ))}
-           </select>
-           <label>Nome</label>
-           <input
-             type="text"
-             value={formData.name}
-             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-             placeholder="Ex: Instagram"
-             required
-           />
-           <label>Senha</label>
-           <input
-             type="password"
-             value={formData.password}
-             onChange={(e) =>
-               setFormData({ ...formData, password: e.target.value })
-             }
-             required
-           />
-           <label>Ícone</label>
-           <div className="icon-grid">
-             {iconOptions.map((icon) => (
-               <button
-                 key={icon}
-                 type="button"
-                 className={`icon-option ${
-                   selectedIcon === icon ? "active" : ""
-                 }`}
-                 onClick={() => setSelectedIcon(icon)}
-               >
-                 {icon}
-               </button>
-             ))}
-           </div>
-           <button className="save-btn" type="submit">
-             {editingItem ? "Atualizar" : "Salvar"}
-           </button>
+          {editingItem && (
+            <div className="edit-mode-banner">
+              {/* ✨✨✨ CORREÇÃO APLICADA AQUI ✨✨✨ */}
+              <span>✏️ Editando: {editingItem.name}</span>
+            </div>
+          )}
+          
+          <label>Categoria</label>
+          <select
+            value={formData.category}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.garget.value })
+            }
+          >
+            {categories.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+          
+          <label>Nome</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Ex: Instagram"
+            required
+          />
+          
+          <label>Senha</label>
+          <input
+            type="password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            required
+          />
+          
+          <label>Ícone</label>
+          <div className="icon-grid">
+            {iconOptions.map((icon) => (
+              <button
+                key={icon}
+                type="button"
+                className={`icon-option ${
+                  selectedIcon === icon ? "active" : ""
+                }`}
+                onClick={() => setSelectedIcon(icon)}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+
+          <div className="form-button-group">
+            <button className="save-btn" type="submit">
+              {editingItem ? "Atualizar" : "Salvar"}
+            </button>
+            
+            <button 
+              type="button" 
+              className="cancel-btn"
+              onClick={handleCancelEdit}
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
       )}
 
-      {/* Filtros */}
+      {/* ... (Restante do JSX: Filtros e Lista) ... */}
       {savedItems.length > 0 && (
         <div className="filters-container">
-            {/* ... (Seu JSX de filtros não muda) ... */}
-            <div className="filters-header">
-             <h3>Filtros e Busca</h3>
-             <span className="results-count">
-               {filteredList.length}{" "}
-               {filteredList.length === 1 ? "resultado" : "resultados"}
-             </span>
-           </div>
-           <div className="filters">
-             <div className="filter-group">
-               <label>Categoria</label>
-               <select
-                 value={filterCategory}
-                 onChange={(e) => setFilterCategory(e.target.value)}
-                 className="filter-category"
-               >
-                 {filteredCategories.map((c) => (
-                   <option key={c}>{c}</option>
-                 ))}
-               </select>
-             </div>
-             <div className="filter-group">
-               <label>Buscar</label>
-               <input
-                 type="text"
-                 placeholder="Digite o nome..."
-                 value={search}
-                 onChange={(e) => setSearch(e.target.value)}
-                 className="filter-search"
-               />
-             </div>
-           </div>
+           <div className="filters-header">
+            <h3>Filtros e Busca</h3>
+            <span className="results-count">
+              {filteredList.length}{" "}
+              {filteredList.length === 1 ? "resultado" : "resultados"}
+            </span>
+          </div>
+          <div className="filters">
+            <div className="filter-group">
+              <label>Categoria</label>
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="filter-category"
+              >
+                {filteredCategories.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Buscar</label>
+              <input
+                type="text"
+                placeholder="Digite o nome..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="filter-search"
+              />
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Lista */}
       <div className="saved-list">
         {loading ? (
              <p>Carregando suas senhas criptografadas...</p>
@@ -500,7 +474,6 @@ export const PasswordManager = () => {
               Nenhuma senha salva ainda. Clique no botão + para adicionar uma
               nova senha.
             </p>
-            {/* ... */}
           </div>
         ) : (
           <>
@@ -513,7 +486,6 @@ export const PasswordManager = () => {
                     <span className="item-category">{item.category}</span>
                     <div className="item-password">
                       <span className="password-value">
-                        {/* 13. DESCRIPTOGRAFA APENAS PARA EXIBIÇÃO */}
                         {visiblePasswords.has(item.id)
                           ? decryptPassword(item.password, masterKey)
                           : "••••••••••••"}
@@ -551,10 +523,8 @@ export const PasswordManager = () => {
               </div>
             ))}
 
-            {/* Paginação */}
             {totalPages > 1 && (
               <div className="pagination">
-                {/* ... (Seu JSX de paginação não muda) ... */}
                 <button
                    className="pagination-btn"
                    onClick={() =>

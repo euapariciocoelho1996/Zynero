@@ -1,87 +1,73 @@
+/* Container principal */
 .zynero-carousel-container {
   width: 100%;
   max-width: 1000px;
   margin: 0 auto 2rem auto;
   padding: 20px;
-  
   border-bottom: 1px solid var(--zynero-border);
-  
-  box-shadow-bottom: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Wrapper do conteúdo */
 .zynero-carousel-content {
   position: relative;
-  min-height: 180px;
+  min-height: 180px; /* Você pode ajustar esta altura */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
+/* Item estático */
 .zynero-carousel-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 16px;
-  padding: 20px;
+  gap: 24px; /* Mais espaço entre o ícone e o texto */
+  padding: 40px;
   width: 100%;
-  animation: fadeIn 0.5s ease-in-out;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* /* MUDANÇA: ÍCONE COM EFEITO NEON 
+/* ======================================= */
 .zynero-carousel-icon {
   color: var(--zynero-accent);
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  /* Múltiplas sombras para criar o brilho neon */
+  filter: 
+    drop-shadow(0 0 6px var(--zynero-accent))
+    drop-shadow(0 0 12px var(--zynero-accent))
+    drop-shadow(0 0 18px rgba(0, 191, 165, 0.7)); /* Cor do accent com opacidade */
 }
 
+/* Garante que o SVG interno tenha o tamanho correto */
+.zynero-carousel-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+/* /* MUDANÇA: TEXTO COM DESTAQUE 
+/* ======================================= */
 .zynero-carousel-text {
   color: var(--zynero-text-primary);
-  font-size: 1rem;
+  font-size: 1.3rem; /* Fonte um pouco maior */
   font-weight: 500;
   line-height: 1.6;
   max-width: 600px;
   margin: 0;
 }
 
+/* Estilo para as palavras em <strong> */
+.zynero-carousel-text strong {
+  color: var(--zynero-accent); /* Usa a cor de destaque do app */
+  font-weight: 700; /* Mais "gordo" */
+}
+
+/* Esconde os indicadores que não existem mais */
 .zynero-carousel-indicators {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
+  display: none;
 }
-
-.zynero-carousel-indicator {
-  width: 8px;
-  height: 8px;
-  background-color: var(--zynero-border);
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-  padding: 0;
-}
-
-.zynero-carousel-indicator:hover {
-  background-color: var(--zynero-text-secondary);
-}
-
-.zynero-carousel-indicator.active {
-  width: 24px;
-  border-radius: 4px;
-  background-color: var(--zynero-accent);
-}
-  

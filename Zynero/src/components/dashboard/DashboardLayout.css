@@ -145,7 +145,7 @@
   
   /* --- 2b. Conteúdo da Página --- */
   .content-wrapper {
-    padding: 24px;
+    
     background-color: var(--zynero-bg-dark);
     flex: 1;
     display: flex;
