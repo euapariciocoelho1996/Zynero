@@ -17,16 +17,39 @@ import { db } from "../auth/firebaseConfig";
 import { auth } from "../auth/firebaseConfig";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import CryptoJS from "crypto-js";
-import { LockKeyhole } from 'lucide-react';
+import { LockKeyhole } from "lucide-react";
 
 // ... (iconOptions e categories) ...
 const iconOptions = [
-  "🔒", "🔑", "📱", "💻", "🌐", "📧", "💾", "🏦", "🎮", "📷",
-  "📚", "🚀", "🎧", "🛒", "⚙️", "🧩", "💬", "🎯", "🧪", "🛡️",
+  "🔒",
+  "🔑",
+  "📱",
+  "💻",
+  "🌐",
+  "📧",
+  "💾",
+  "🏦",
+  "🎮",
+  "📷",
+  "📚",
+  "🚀",
+  "🎧",
+  "🛒",
+  "⚙️",
+  "🧩",
+  "💬",
+  "🎯",
+  "🧪",
+  "🛡️",
 ];
 
 const categories = [
-  "Redes Sociais", "Banco", "Aplicativo", "Email", "Trabalho", "Outros",
+  "Redes Sociais",
+  "Banco",
+  "Aplicativo",
+  "Email",
+  "Trabalho",
+  "Outros",
 ];
 
 interface PasswordItem {
@@ -74,7 +97,7 @@ export const PasswordManager = () => {
       return originalText;
     } catch (error) {
       console.error("Erro ao descriptografar:", error);
-      return "****** (Chave Inválida)"; 
+      return "****** (Chave Inválida)";
     }
   };
 
@@ -97,9 +120,9 @@ export const PasswordManager = () => {
       return;
     }
     if (!masterKey) {
-       setLoading(false);
-       setSavedItems([]);
-       return;
+      setLoading(false);
+      setSavedItems([]);
+      return;
     }
     setLoading(true);
     const passwordsRef = collection(db, "passwords");
@@ -124,13 +147,17 @@ export const PasswordManager = () => {
       (error) => {
         console.error("❌ Erro ao carregar senhas:", error);
         setLoading(false);
-        Swal.fire("Erro ao carregar!", `Não foi possível carregar suas senhas. ${error.message}`, "error");
+        Swal.fire(
+          "Erro ao carregar!",
+          `Não foi possível carregar suas senhas. ${error.message}`,
+          "error"
+        );
       }
     );
     return () => {
       unsubscribe();
     };
-  }, [user, masterKey]); 
+  }, [user, masterKey]);
 
   // ... (useMemos: filteredCategories, filteredList, paginatedList) ...
   const filteredCategories = useMemo(() => {
@@ -166,7 +193,11 @@ export const PasswordManager = () => {
       return;
     }
     if (!masterKey) {
-      Swal.fire("Cofre Trancado!", "Destranque seu cofre para salvar.", "warning");
+      Swal.fire(
+        "Cofre Trancado!",
+        "Destranque seu cofre para salvar.",
+        "warning"
+      );
       return;
     }
     try {
@@ -191,8 +222,12 @@ export const PasswordManager = () => {
 
   const togglePasswordVisibility = (itemId: string) => {
     if (!masterKey) {
-        Swal.fire("Cofre Trancado!", "Destranque seu cofre para ver as senhas.", "warning");
-        return;
+      Swal.fire(
+        "Cofre Trancado!",
+        "Destranque seu cofre para ver as senhas.",
+        "warning"
+      );
+      return;
     }
     setVisiblePasswords((prev) => {
       const newSet = new Set(prev);
@@ -207,8 +242,12 @@ export const PasswordManager = () => {
 
   const handleEdit = (item: PasswordItem) => {
     if (!masterKey) {
-        Swal.fire("Cofre Trancado!", "Destranque seu cofre para editar.", "warning");
-        return;
+      Swal.fire(
+        "Cofre Trancado!",
+        "Destranque seu cofre para editar.",
+        "warning"
+      );
+      return;
     }
     setEditingItem(item);
     setFormData({
@@ -230,8 +269,12 @@ export const PasswordManager = () => {
     e.preventDefault();
     if (!user || !editingItem) return;
     if (!masterKey) {
-        Swal.fire("Cofre Trancado!", "Destranque seu cofre para atualizar.", "warning");
-        return;
+      Swal.fire(
+        "Cofre Trancado!",
+        "Destranque seu cofre para atualizar.",
+        "warning"
+      );
+      return;
     }
     try {
       const docRef = doc(db, "passwords", editingItem.id);
@@ -242,7 +285,11 @@ export const PasswordManager = () => {
         password: encryptPassword(formData.password, masterKey),
         updatedAt: new Date(),
       });
-      Swal.fire("Atualizado!", "Os dados foram atualizados com sucesso.", "success");
+      Swal.fire(
+        "Atualizado!",
+        "Os dados foram atualizados com sucesso.",
+        "success"
+      );
       setFormData({ category: categories[0], name: "", password: "" });
       setSelectedIcon(iconOptions[0]);
       setEditingItem(null);
@@ -299,11 +346,13 @@ export const PasswordManager = () => {
       </div>
     );
   }
-  
+
   if (!masterKey) {
     const handleUnlock = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const password = (e.currentTarget.elements.namedItem("masterpass") as HTMLInputElement).value;
+      const password = (
+        e.currentTarget.elements.namedItem("masterpass") as HTMLInputElement
+      ).value;
       if (password) {
         setMasterKey(password);
         setLoading(true);
@@ -311,12 +360,25 @@ export const PasswordManager = () => {
     };
     return (
       <div className="password-manager vault-locked">
-        <h2 style={{color: '#9a9ea9'}}><LockKeyhole /> Cofre Trancado</h2>
+        <h2 style={{ color: "#9a9ea9" }}>
+          <LockKeyhole /> Cofre Trancado
+        </h2>
         <p>Digite sua senha mestra para descriptografar suas senhas.</p>
-        <p style={{fontSize: '0.8rem', opacity: 0.7, color: '#00a087'}}>(Esta senha NUNCA é salva, apenas usada localmente)</p>
+        <p style={{ fontSize: "0.8rem", opacity: 0.7, color: "#00a087" }}>
+          (Esta senha NUNCA é salva, apenas usada localmente)
+        </p>
         <form onSubmit={handleUnlock} className="vault-form">
-          <label htmlFor="masterpass" style={ { color: '#9a9ea9' } }>Senha Mestra</label>
-          <input type="password" id="masterpass" name="masterpass" required autoFocus placeholder='********'/>
+          <label htmlFor="masterpass" style={{ color: "#9a9ea9" }}>
+            Senha Mestra
+          </label>
+          <input
+            type="password"
+            id="masterpass"
+            name="masterpass"
+            required
+            autoFocus
+            placeholder="********"
+          />
           <button type="submit" className="save-btn">
             Destrancar
           </button>
@@ -324,7 +386,7 @@ export const PasswordManager = () => {
       </div>
     );
   }
-  
+
   // ====================================================================
   // RENDERIZAÇÃO PRINCIPAL
   // ====================================================================
@@ -334,11 +396,11 @@ export const PasswordManager = () => {
         Trancar Cofre
       </button>
 
-      <button 
-        className="add-btn" 
+      <button
+        className="add-btn"
         onClick={() => {
           if (showForm) {
-            handleCancelEdit(); 
+            handleCancelEdit();
           } else {
             setShowForm(true);
             setTimeout(() => {
@@ -364,19 +426,19 @@ export const PasswordManager = () => {
               <span>✏️ Editando: {editingItem.name}</span>
             </div>
           )}
-          
+
           <label>Categoria</label>
           <select
             value={formData.category}
             onChange={(e) =>
-              setFormData({ ...formData, category: e.garget.value })
+              setFormData({ ...formData, category: e.target.value })
             }
           >
             {categories.map((c) => (
               <option key={c}>{c}</option>
             ))}
           </select>
-          
+
           <label>Nome</label>
           <input
             type="text"
@@ -385,7 +447,7 @@ export const PasswordManager = () => {
             placeholder="Ex: Instagram"
             required
           />
-          
+
           <label>Senha</label>
           <input
             type="password"
@@ -395,7 +457,7 @@ export const PasswordManager = () => {
             }
             required
           />
-          
+
           <label>Ícone</label>
           <div className="icon-grid">
             {iconOptions.map((icon) => (
@@ -416,9 +478,9 @@ export const PasswordManager = () => {
             <button className="save-btn" type="submit">
               {editingItem ? "Atualizar" : "Salvar"}
             </button>
-            
-            <button 
-              type="button" 
+
+            <button
+              type="button"
               className="cancel-btn"
               onClick={handleCancelEdit}
             >
@@ -431,7 +493,7 @@ export const PasswordManager = () => {
       {/* ... (Restante do JSX: Filtros e Lista) ... */}
       {savedItems.length > 0 && (
         <div className="filters-container">
-           <div className="filters-header">
+          <div className="filters-header">
             <h3>Filtros e Busca</h3>
             <span className="results-count">
               {filteredList.length}{" "}
@@ -467,7 +529,7 @@ export const PasswordManager = () => {
 
       <div className="saved-list">
         {loading ? (
-             <p>Carregando suas senhas criptografadas...</p>
+          <p>Carregando suas senhas criptografadas...</p>
         ) : filteredList.length === 0 ? (
           <div className="empty-state">
             <p>
@@ -526,26 +588,26 @@ export const PasswordManager = () => {
             {totalPages > 1 && (
               <div className="pagination">
                 <button
-                   className="pagination-btn"
-                   onClick={() =>
-                     setCurrentPage((prev) => Math.max(1, prev - 1))
-                   }
-                   disabled={currentPage === 1}
-                 >
-                   ← Anterior
-                 </button>
-                 <span className="pagination-info">
-                   Página {currentPage} de {totalPages}
-                 </span>
-                 <button
-                   className="pagination-btn"
-                   onClick={() =>
-                     setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                   }
-                   disabled={currentPage === totalPages}
-                 >
-                   Próxima →
-                 </button>
+                  className="pagination-btn"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  ← Anterior
+                </button>
+                <span className="pagination-info">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button
+                  className="pagination-btn"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Próxima →
+                </button>
               </div>
             )}
           </>
