@@ -1,8 +1,12 @@
 {
   "dependencies": {
+    "crypto-js": "^4.2.0",
     "firebase": "^12.6.0",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.553.0",
     "sweetalert2": "^11.26.3"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2"
   }
 }
