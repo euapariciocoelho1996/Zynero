@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
+import { Trash } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import Swal from 'sweetalert2';
 import './PasswordManager.css';
 import { 
@@ -486,6 +488,8 @@ export const PasswordManager = () => {
                     >
                       {visiblePasswords.has(item.id) ? '👁️' : '👁️‍🗨️'}
                     </button>
+
+                    
                   </div>
                 </div>
               </div>
@@ -495,14 +499,14 @@ export const PasswordManager = () => {
                   onClick={() => handleEdit(item)}
                   title="Editar senha"
                 >
-                  ✏️ 
+                  <Pencil className="icon-icon"/>
                 </button>
                 <button
                   className="action-btn delete-btn"
                   onClick={() => handleDelete(item.id)}
                   title="Deletar senha"
                 >
-                  🗑️ 
+                  <Trash className="icon-icon" /> 
                 </button>
               </div>
             </div>

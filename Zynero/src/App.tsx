@@ -63,14 +63,7 @@ function App() {
 
   // 3. Tela Principal (usuário autenticado)
   return (
-    <DashboardLayout user={user} onLogout={handleLogout}>
-      {/* 
-        TODO: No futuro, adicionar react-router-dom aqui para 
-        renderizar as páginas (Cofre, Configurações, etc.)
-      */}
-      <h2>Bem-vindo ao seu Cofre</h2>
-      <p>Este é o conteúdo principal da sua página de dashboard.</p>
-    </DashboardLayout>
+    <DashboardLayout user={user} onLogout={handleLogout}></DashboardLayout>
   );
 }
 
